@@ -1,6 +1,7 @@
 const Game = {
     elements : {
       addPlayerButton : document.querySelector('.addPlayerButton'),
+      showCardsButton : document.querySelector('.showCardsButton'),
       startGameButton : document.querySelector('.startGameButton'),
       previousPlayerButton : document.querySelector('.previousPlayerButton'),
       nextPlayerButton : document.querySelector('.nextPlayerButton'),
@@ -18,6 +19,7 @@ const Game = {
   addListeners: function () {
       this.elements.addPlayerButton.onclick = this.addPlayer.bind(this)
       this.elements.startGameButton.onclick = this.startGame.bind(this)
+      this.elements.showCardsButton.onclick = this.showAllCards.bind(this)
       this.elements.nextPlayerButton.onclick = this.nextPlayer.bind(this, +1)
       this.elements.previousPlayerButton.onclick = this.nextPlayer.bind(this, -1)
       this.elements.bunkerToolbarButton.onclick = this.pickBunkerCard.bind(this, 'bunker')
@@ -34,9 +36,38 @@ const Game = {
     `)
   },
 
+  showAllCards: function () {
+    this.elements.showCardsButton.style.display = 'none'
+      for (let allCardsKey in this.allPlayerCards) {
+        this.allPlayerCards[allCardsKey].forEach((card) => {
+          this.elements.playerCards.innerHTML += `
+            <div class="card">
+                <p class="title">${card.title}</p>
+                <p class="description">${card.description}</p>
+                <p class="icon">${card.icon}</p>
+                <p class="category">${this.translateCategory(allCardsKey)}</p>
+          </div>
+    `
+        })
+      }
+    for (let allBunkerCardsKey in this.allBunkerCards) {
+      this.allBunkerCards[allBunkerCardsKey].forEach((card) => {
+        this.elements.playerCards.innerHTML += `
+            <div class="card">
+                <p class="title">${card.title}</p>
+                <p class="description">${card.description}</p>
+                <p class="icon">${card.icon}</p>
+                <p class="category">${this.translateCategory(allBunkerCardsKey)}</p>
+          </div>
+    `
+      })
+    }
+  },
+
   startGame : function () {
       this.elements.addPlayerButton.style.display = 'none'
       this.elements.startGameButton.style.display = 'none'
+      this.elements.showCardsButton.style.display = 'none'
       this.elements.nextPlayerButton.style.display = 'flex'
       this.elements.previousPlayerButton.style.display = 'flex'
       this.elements.commonToolbar.style.display = 'block'
@@ -204,7 +235,7 @@ const Game = {
         categoryName = '<span style="color: red; text-shadow: 0 0 3px rgb(255 0 0);">Катастрофа</span>'
         break
       case 'danger':
-        categoryName = 'Опасность'
+        categoryName = '<span style="color: yellow; text-shadow: 0 0 3px rgb(255 221 0);">Опасность</span>'
         break
       case 'biology':
         categoryName = 'Биология'
