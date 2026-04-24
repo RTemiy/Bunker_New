@@ -7,16 +7,76 @@
   {
     "title" : "Облили химикатами",
     "description" : "",
-    "icon" : ""
+    "icon" : "⚗\uFE0F"
   },
   {
     "title" : "Подрабатывал в садике",
     "description" : "",
-    "icon" : ""
+    "icon" : "\uD83E\uDD31"
   },
   {
     "title" : "Амбидекстр",
     "description" : "",
-    "icon" : ""
+    "icon" : "\uD83D\uDE4C"
+  },
+  {
+    "title" : "Отсидел в тюрьме  3 года",
+    "description" : "",
+    "icon" : "\uD83C\uDFE2"
+  },
+  {
+    "title" : "Знает президента лично",
+    "description" : "",
+    "icon" : "\uD83D\uDDE3"
+  },
+  {
+    "title" : "Не закончил школу",
+    "description" : "",
+    "icon" : "\uD83E\uDDD1\u200D\uD83C\uDF93"
+  },
+  {
+    "title" : "Забирали инопланетяне",
+    "description" : "",
+    "icon" : "\uD83D\uDEF8"
+  },
+  {
+    "title" : "Был покусан зомби",
+    "description" : "",
+    "icon" : "\uD83E\uDDDF"
+  },
+  {
+    "title" : "Зарабатывал проституцией",
+    "description" : "",
+    "icon" : "\uD83D\uDC8B"
+  },
+  {
+    "title" : "Избежал смертной казни",
+    "description" : "",
+    "icon" : "\uD83E\uDE93"
+  },
+  {
+    "title" : "Пережил пожар",
+    "description" : "",
+    "icon" : "\uD83D\uDD25"
+  },
+  {
+    "title" : "Пережил 10 ударов молнией",
+    "description" : "",
+    "icon" : "\uD83C\uDF29"
+  },
+  {
+    "title" : "Понимает животных",
+    "description" : "",
+    "icon" : "\uD83D\uDC3F"
+  },
+  {
+    "title" : "Пробежал марафон",
+    "description" : "",
+    "icon" : "\uD83C\uDFC3"
+  },
+  {
+    "title" : "Задерживает дыхание на 10 минут",
+    "description" : "",
+    "icon" : "\uD83E\uDEC1"
   }
 ]

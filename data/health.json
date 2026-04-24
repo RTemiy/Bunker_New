@@ -1,21 +1,91 @@
 [
   {
     "title" : "Аллергик",
-    "description" : "Мне срочно нужны таблетки от аллергии",
+    "description" : "",
     "icon" : "\uD83D\uDE47"
   },
   {
     "title" : "Паралич",
     "description" : "",
-    "icon" : ""
+    "icon" : "⚡\uFE0F"
   },
   {
     "title" : "Бессонница",
     "description" : "",
-    "icon" : ""
+    "icon" : "\uD83D\uDCA4"
   },
   {
     "title" : "Видит в темноте",
+    "description" : "",
+    "icon" : "\uD83D\uDC41\u200D\uD83D\uDDE8"
+  },
+  {
+    "title" : "Зомби",
+    "description" : "",
+    "icon" : "\uD83E\uDDDF"
+  },
+  {
+    "title" : "Слепой",
+    "description" : "",
+    "icon" : "\uD83E\uDDD1\u200D\uD83E\uDDAF"
+  },
+  {
+    "title" : "Глухонемой",
+    "description" : "",
+    "icon" : "\uD83E\uDDCF"
+  },
+  {
+    "title" : "Здоров",
+    "description" : "",
+    "icon" : "\uD83D\uDCAA"
+  },
+  {
+    "title" : "Щупальца вместо рук",
+    "description" : "",
+    "icon" : "\uD83D\uDC19"
+  },
+  {
+    "title" : "Шерсть на лице",
+    "description" : "",
+    "icon" : "\uD83D\uDC3B"
+  },
+  {
+    "title" : "Астма",
+    "description" : "",
+    "icon" : "\uD83D\uDC45"
+  },
+  {
+    "title" : "Нет ноги",
+    "description" : "",
+    "icon" : "\uD83E\uDDB5"
+  },
+  {
+    "title" : "Последняя стадия рака",
+    "description" : "",
+    "icon" : "☠\uFE0F"
+  },
+  {
+    "title" : "Шизофрения",
+    "description" : "",
+    "icon" : "\uD83D\uDDEF"
+  },
+  {
+    "title" : "Бесплодие",
+    "description" : "",
+    "icon" : "❌"
+  },
+  {
+    "title" : "Гемофилия",
+    "description" : "",
+    "icon" : "\uD83E\uDE78"
+  },
+  {
+    "title" : "",
+    "description" : "",
+    "icon" : ""
+  },
+  {
+    "title" : "",
     "description" : "",
     "icon" : ""
   }

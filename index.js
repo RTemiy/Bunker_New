@@ -160,7 +160,7 @@ const Game = {
         categoryName = 'Бункер'
         break
       case 'cataclysm':
-        categoryName = 'Катастрофа'
+        categoryName = '<span style="color: red; text-shadow: 0 0 3px rgb(255 0 0);">Катастрофа</span>'
         break
       case 'danger':
         categoryName = 'Опасность'
