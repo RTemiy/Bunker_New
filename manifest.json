@@ -1,0 +1,16 @@
+{
+  "short_name": "Бункер: Разделение",
+  "name": "Карточная игра",
+  "icons": [
+    {
+      "src": "https://rtemiy.github.io/Bunker_New//favicon.png",
+      "type": "image/png",
+      "sizes": "262x262"
+    }
+  ],
+  "start_url": "https://rtemiy.github.io/Bunker_New/",
+  "background_color": "green",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "green"
+}
