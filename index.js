@@ -26,6 +26,7 @@ const Game = {
       this.elements.startGameButton.style.display = 'none'
       this.elements.nextPlayerButton.style.display = 'flex'
       this.elements.commonToolbar.style.display = 'block'
+      this.elements.currentPlayerName.style.display = 'block'
       this.elements.commonCards.style.display = 'flex'
       this.showPlayerCards(this.currentPlayer)
   },
@@ -38,7 +39,7 @@ const Game = {
             <p class="title">${cardPicked.title}</p>
             <p class="description">${cardPicked.description}</p>
             <p class="icon">${cardPicked.icon}</p>
-            <p class="category">${category}</p>
+            <p class="category">${this.translateCategory(category)}</p>
           </div>
     `
   },
@@ -64,19 +65,24 @@ const Game = {
 
   showPlayerCards : function (playerNumber) {
       const player = this.players[playerNumber]
-      this.elements.currentPlayerName.innerHTML = player.name
       let resultHTML = ''
       for (let cardsKey in player.cards) {
         resultHTML += `
-          <div class="card">
+          <div class="card card-hidden">
             <p class="title">${player.cards[cardsKey].title}</p>
             <p class="description">${player.cards[cardsKey].description}</p>
             <p class="icon">${player.cards[cardsKey].icon}</p>
-            <p class="category">${cardsKey}</p>
+            <p class="category">${this.translateCategory(cardsKey)}</p>
           </div>
         `
       }
       this.elements.playerCards.innerHTML = resultHTML
+      this.elements.playerCards.querySelectorAll('.card').forEach((card) => {
+        console.log(card)
+        card.onclick = () => {
+          card.classList.toggle('card-hidden')
+        }
+    })
       this.elements.currentPlayerName.innerHTML = player.name
   },
 
@@ -145,6 +151,47 @@ const Game = {
 
     const randomNumber = Math.floor(Math.random() * categoryCards.length)
     return categoryCards.splice(randomNumber, 1)[0]
+  },
+
+  translateCategory : function (category) {
+    let categoryName = ''
+    switch (category){
+      case 'bunker':
+        categoryName = 'Бункер'
+        break
+      case 'cataclysm':
+        categoryName = 'Катастрофа'
+        break
+      case 'danger':
+        categoryName = 'Опасность'
+        break
+      case 'biology':
+        categoryName = 'Биология'
+        break
+      case 'health':
+        categoryName = 'Здоровье'
+        break
+      case 'profession':
+        categoryName = 'Профессия'
+        break
+      case 'fact':
+        categoryName = 'Факт'
+        break
+      case 'hobby':
+        categoryName = 'Хобби'
+        break
+      case 'baggage':
+        categoryName = 'Багаж'
+        break
+      case 'phobia':
+        categoryName = 'Фобия'
+        break
+      case 'perk':
+        categoryName = 'Перк'
+        break
+    }
+
+    return categoryName
   },
 
   init: function () {

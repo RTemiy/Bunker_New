@@ -1,3 +1,8 @@
+html{
+  padding: 0;
+  margin: 0;
+}
+
 body{
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -7,6 +12,13 @@ body{
   user-select: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font: 13px Inconsolata, monospace;
+  background-color: black;
+  background-image: radial-gradient(rgb(0, 26, 3), black 120%);
+  color: rgb(0, 255, 13);
+  text-shadow: 0 0 3px rgb(0, 255, 13);
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
 }
 
 p{
@@ -14,17 +26,36 @@ p{
   margin: 0;
 }
 
+button{
+  border-radius: 100px;
+  border: 2px solid green;
+  background-color: #003000;
+  padding: 5px;
+  color: rgb(0, 255, 13);
+  text-shadow: 0 0 3px rgb(0, 255, 13);
+  box-shadow: 0 0 3px rgb(0, 255, 13);
+  font: 13px Inconsolata, monospace;
+}
+
 .toolbar{
   display: flex;
   flex-direction: row;
-  border-bottom: 1px solid black;
-  padding: 5px;
-
-  button{
-  }
+  border-top: 1px solid green;
+  border-bottom: 1px solid green;
+  padding: 5px 0;
+  margin-top: 5px;
+  gap: 5px;
 
   .currentPlayerName{
     width: 200px;
+    line-height: 25px;
+    font-weight: 900;
+    font-size: x-large;
+    text-align: center;
+    border: 2px solid green;
+    box-shadow: 0 0 3px rgb(0, 255, 13);
+    border-radius: 100px;
+    margin: 0 5px;
   }
 }
 
@@ -36,25 +67,51 @@ p{
   gap: 5px;
 }
 
+.card-hidden {
+  .title{
+    visibility: hidden;
+    opacity: 0 !important;
+  }
+
+  .description{
+    visibility: hidden;
+    opacity: 0;
+  }
+  .icon{
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
 .card{
   width: 120px;
   height: 180px;
-  border: 1px solid red;
+  border: 2px solid green;
   position: relative;
   border-radius: 10px;
   overflow: hidden;
+  box-shadow: 0 0 3px rgb(0, 255, 13);
+  transition: opacity 0.5s ease-in, display 0.5s allow-discrete;
+  @starting-style {
+    opacity: 0;
+  }
 
   .title{
     font-weight: 600;
     padding: 5px 0 0 0;
     text-align: center;
+    transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
   }
 
   .description{
     overflow: scroll;
     overflow-x: hidden;
+    position: relative;
     height: 120px;
-    width: 140px;
+    width: 125px;
+    padding: 5px;
+    z-index: 5;
+    transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
   }
 
   .icon{
@@ -62,21 +119,25 @@ p{
     bottom: 0;
     right: 0;
     font-size: xxx-large;
-    filter: url(#pixelate);
+    z-index: 1;
+    text-shadow: none;
+    transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
+    /*filter: url(#pixelate);*/
   }
 
   .category{
     position: absolute;
     left: 5px;
     bottom: 5px;
+    font-size: smaller;
     font-style: italic;
   }
 }
 
 .commonToolbar{
   padding: 5px;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
+  border-top: 1px solid green;
+  border-bottom: 1px solid green;
 }
 
 
