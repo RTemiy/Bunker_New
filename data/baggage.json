@@ -1,0 +1,42 @@
+[
+  {
+    "title" : "Элексир долголетия",
+    "description" : "",
+    "icon" : "\uD83E\uDDEA"
+  },
+  {
+    "title" : "Скафандр",
+    "description" : "",
+    "icon" : "\uD83D\uDC68\u200D\uD83D\uDE80"
+  },
+  {
+    "title" : "Грелка",
+    "description" : "",
+    "icon" : "\uD83D\uDD25"
+  },
+  {
+    "title" : "Инкубатор с яйцами",
+    "description" : "",
+    "icon" : "\uD83E\uDD5A"
+  },
+  {
+    "title" : "Снайперская винтовка",
+    "description" : "",
+    "icon" : "\uD83C\uDFF9"
+  },
+  {
+    "title" : "Аптечка",
+    "description" : "",
+    "icon" : "➕"
+  },
+  {
+    "title" : "Кейс с агрокультурами",
+    "description" : "",
+    "icon" : "\uD83D\uDCBC"
+  },
+  {
+    "title" : "Набор инструментов",
+    "description" : "",
+    "icon" : "\uD83D\uDEE0"
+  }
+]

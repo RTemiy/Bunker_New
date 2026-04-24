@@ -1,0 +1,82 @@
+body{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  font: 13px Inconsolata, monospace;
+}
+
+p{
+  padding: 0;
+  margin: 0;
+}
+
+.toolbar{
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid black;
+  padding: 5px;
+
+  button{
+  }
+
+  .currentPlayerName{
+    width: 200px;
+  }
+}
+
+.playerCards, .commonCards{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 10px;
+  gap: 5px;
+}
+
+.card{
+  width: 120px;
+  height: 180px;
+  border: 1px solid red;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+
+  .title{
+    font-weight: 600;
+    padding: 5px 0 0 0;
+    text-align: center;
+  }
+
+  .description{
+    overflow: scroll;
+    overflow-x: hidden;
+    height: 120px;
+    width: 140px;
+  }
+
+  .icon{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: xxx-large;
+    filter: url(#pixelate);
+  }
+
+  .category{
+    position: absolute;
+    left: 5px;
+    bottom: 5px;
+    font-style: italic;
+  }
+}
+
+.commonToolbar{
+  padding: 5px;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+

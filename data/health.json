@@ -1,0 +1,22 @@
+[
+  {
+    "title" : "Аллергик",
+    "description" : "Мне срочно нужны таблетки от аллергии",
+    "icon" : "\uD83D\uDE47"
+  },
+  {
+    "title" : "Паралич",
+    "description" : "",
+    "icon" : ""
+  },
+  {
+    "title" : "Бессонница",
+    "description" : "",
+    "icon" : ""
+  },
+  {
+    "title" : "Видит в темноте",
+    "description" : "",
+    "icon" : ""
+  }
+]
