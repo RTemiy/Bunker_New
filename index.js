@@ -2,6 +2,7 @@ const Game = {
     elements : {
       addPlayerButton : document.querySelector('.addPlayerButton'),
       startGameButton : document.querySelector('.startGameButton'),
+      previousPlayerButton : document.querySelector('.previousPlayerButton'),
       nextPlayerButton : document.querySelector('.nextPlayerButton'),
       currentPlayerName : document.querySelector('.currentPlayerName'),
       playerCards : document.querySelector('.playerCards'),
@@ -10,24 +11,38 @@ const Game = {
       cataclysmToolbarButton : document.querySelector('.cataclysmToolbarButton'),
       dangerToolbarButton : document.querySelector('.dangerToolbarButton'),
       commonCards: document.querySelector('.commonCards'),
+      newGameButton: document.querySelector('.newGameButton'),
+      infoButton: document.querySelector('.infoButton'),
   },
 
   addListeners: function () {
       this.elements.addPlayerButton.onclick = this.addPlayer.bind(this)
       this.elements.startGameButton.onclick = this.startGame.bind(this)
-      this.elements.nextPlayerButton.onclick = this.nextPlayer.bind(this)
+      this.elements.nextPlayerButton.onclick = this.nextPlayer.bind(this, +1)
+      this.elements.previousPlayerButton.onclick = this.nextPlayer.bind(this, -1)
       this.elements.bunkerToolbarButton.onclick = this.pickBunkerCard.bind(this, 'bunker')
       this.elements.cataclysmToolbarButton.onclick = this.pickBunkerCard.bind(this, 'cataclysm')
       this.elements.dangerToolbarButton.onclick = this.pickBunkerCard.bind(this, 'danger')
+      this.elements.newGameButton.onclick = this.startNewRound.bind(this)
+      this.elements.infoButton.onclick = this.showInfo.bind(this)
+  },
+
+  showInfo: function () {
+    alert(`
+    - Карт в колоде: ${this.allCardsAmount-this.wastedCardsAmount}/${this.allCardsAmount}
+    - Всего игроков: ${this.players.length}
+    `)
   },
 
   startGame : function () {
       this.elements.addPlayerButton.style.display = 'none'
       this.elements.startGameButton.style.display = 'none'
       this.elements.nextPlayerButton.style.display = 'flex'
+      this.elements.previousPlayerButton.style.display = 'flex'
       this.elements.commonToolbar.style.display = 'block'
       this.elements.currentPlayerName.style.display = 'block'
       this.elements.commonCards.style.display = 'flex'
+      this.elements.newGameButton.style.display = 'block'
       this.showPlayerCards(this.currentPlayer)
   },
 
@@ -44,10 +59,35 @@ const Game = {
     `
   },
 
+  startNewRound: function () {
+      this.elements.commonCards.innerHTML = ''
+      //deletes all players
+      this.players.forEach((player) => {
+        for (let cardsKey in player.cards) {
+          player.cards[cardsKey] = this.pickRandom('player',cardsKey)
+        }
+      })
+      this.showPlayerCards(this.currentPlayer)
+
+      },
+
   players : [],
   currentPlayer : 0,
+  allCardsAmount : 0,
+  wastedCardsAmount : 0,
+  firstAddPlayer: true,
 
   addPlayer : function () {
+      if (this.firstAddPlayer) {
+        this.firstAddPlayer = false
+        for (let allPlayerCardsKey in this.allPlayerCards) {
+          this.allCardsAmount += this.allPlayerCards[allPlayerCardsKey].length
+        }
+
+        for (let allBunkerCardsKey in this.allBunkerCards) {
+          this.allCardsAmount += this.allBunkerCards[allBunkerCardsKey].length
+        }
+      }
     const newPlayer = {
       name: prompt('Укажите ваше имя:'),
       cards: {}
@@ -78,7 +118,6 @@ const Game = {
       }
       this.elements.playerCards.innerHTML = resultHTML
       this.elements.playerCards.querySelectorAll('.card').forEach((card) => {
-        console.log(card)
         card.onclick = () => {
           card.classList.toggle('card-hidden')
         }
@@ -86,15 +125,16 @@ const Game = {
       this.elements.currentPlayerName.innerHTML = player.name
   },
 
-  nextPlayer : function () {
-      this.currentPlayer++
+  nextPlayer : function (number) {
+      this.currentPlayer+=number
       if (this.currentPlayer >= this.players.length) {
           this.currentPlayer = 0
+      } else if (this.currentPlayer < 0){
+          this.currentPlayer = this.players.length - 1
       }
       this.elements.playerCards.innerHTML = ''
-      setTimeout(() => { alert('Передайте устройство следующему игроку.') }, 10)
+      setTimeout(() => { alert('Передайте устройство игроку: ' + this.players[this.currentPlayer].name + '') }, 10)
       setTimeout(() => { this.showPlayerCards(this.currentPlayer) }, 11)
-
   },
 
   allPlayerCards : {
@@ -138,6 +178,7 @@ const Game = {
 
   pickRandom : function(type, category) {
       let categoryCards
+      this.wastedCardsAmount++
       switch (type) {
         case 'bunker':
           categoryCards = this.allBunkerCards[category]
