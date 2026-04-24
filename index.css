@@ -102,8 +102,8 @@ button{
 }
 
 .card{
-  flex: 1 1 120px; /* Allow cards to grow and shrink */
-  max-width: 150px; /* But not too wide */
+  flex: 0 0 140px; /* Disable growing, disable shrinking, set a fixed base width */
+  width: 140px;
   height: 180px;
   border: 2px solid green;
   position: relative;
@@ -118,7 +118,7 @@ button{
 }
 
 .card .title{
-  font-weight: 600;
+  font-weight: 900;
   padding: 5px 5px 0 5px;
   text-align: center;
   transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
