@@ -37,24 +37,6 @@ const Game = {
   // --- Custom Modal Logic ---
   showModal: function(config) {
     return new Promise((resolve) => {
-      // Функция-обработчик для нажатия клавиш
-      const keydownHandler = (event) => {
-        if (event.key === 'Enter') {
-          // Находим основную кнопку (которая подтверждает действие)
-          const primaryButton = config.buttons.find(b => b.resolves);
-          if (primaryButton) {
-            // Имитируем клик по ней
-            const value = inputElement ? inputElement.value : true;
-            this.hideModal();
-            document.removeEventListener('keydown', keydownHandler); // Убираем обработчик
-            resolve(value);
-          }
-        }
-      };
-
-      // Добавляем обработчик при открытии окна
-      document.addEventListener('keydown', keydownHandler);
-
       this.elements.modalTitle.textContent = config.title || '';
       this.elements.modalContent.innerHTML = ''; // Clear previous content
       this.elements.modalActions.innerHTML = '';
@@ -80,7 +62,6 @@ const Game = {
         button.onclick = () => {
           const value = inputElement ? inputElement.value : true;
           this.hideModal();
-          document.removeEventListener('keydown', keydownHandler); // Убираем обработчик
           resolve(buttonConfig.resolves ? value : null);
         };
         this.elements.modalActions.appendChild(button);
@@ -322,10 +303,10 @@ const Game = {
     let categoryName = ''
     switch (category){
       case 'bunker':
-        categoryName = 'Бункер'
+        categoryName = '<span style="color: #00b2ff; text-shadow: 0 0 3px rgb(0 217 255);">Бункер</span>'
         break
       case 'cataclysm':
-        categoryName = '<span style="color: red; text-shadow: 0 0 3px rgb(255 0 0);">Катастрофа</span>'
+        categoryName = '<span style="color: #ff00fb; text-shadow: 0 0 3px rgb(238 0 255);">Катастрофа</span>'
         break
       case 'danger':
         categoryName = '<span style="color: yellow; text-shadow: 0 0 3px rgb(255 221 0);">Опасность</span>'
