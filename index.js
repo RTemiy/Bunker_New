@@ -182,6 +182,7 @@ const Game = {
   addPlayer : async function () {
       if (this.firstAddPlayer) {
         this.firstAddPlayer = false
+        this.elements.infoButton.style.display = 'block'
         for (let allPlayerCardsKey in this.allPlayerCards) {
           this.allCardsAmount += this.allPlayerCards[allPlayerCardsKey].length
         }
