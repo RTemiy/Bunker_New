@@ -1,6 +1,24 @@
 html{
   padding: 0;
   margin: 0;
+  /* Стилизация основного скроллбара для Firefox */
+  scrollbar-width: auto; /* or 'thin' */
+  scrollbar-color: rgb(0, 255, 13) #002500;
+}
+
+/* Стилизация основного скроллбара для WebKit-браузеров (Chrome, Safari, Edge) */
+html::-webkit-scrollbar {
+  width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #002500;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: rgb(0, 255, 13);
+  border-radius: 20px;
+  border: 2px solid green;
 }
 
 body{
@@ -47,21 +65,25 @@ button{
   margin-top: 5px;
   gap: 5px;
   flex-wrap: wrap;
+  align-items: center;
+  padding: 5px 10px;
+}
 
-  .currentPlayerName{
-    width: 200px;
-    font-weight: 900;
-    font-size: x-large;
-    text-align: center;
-    border: 2px solid green;
-    box-shadow: 0 0 3px rgb(0, 255, 13);
-    border-radius: 100px;
-    margin: 0 5px;
-  }
+.toolbar .currentPlayerName{
+  flex: 1 1 150px; /* Allow shrinking and growing */
+  min-width: 150px;
+  font-weight: 900;
+  font-size: x-large;
+  text-align: center;
+  border: 2px solid green;
+  box-shadow: 0 0 3px rgb(0, 255, 13);
+  border-radius: 100px;
+  margin: 0 5px;
+  padding: 2px 5px;
+}
 
-  .newGameButton{
-    background-color: #300000;
-  }
+.toolbar .newGameButton{
+  background-color: #300000;
 }
 
 .playerCards, .commonCards{
@@ -72,24 +94,16 @@ button{
   gap: 5px;
 }
 
-.card-hidden {
-  .title{
-    visibility: hidden;
-    opacity: 0 !important;
-  }
-
-  .description{
-    visibility: hidden;
-    opacity: 0;
-  }
-  .icon{
-    visibility: hidden;
-    opacity: 0;
-  }
+.card-hidden .title,
+.card-hidden .description,
+.card-hidden .icon {
+  visibility: hidden;
+  opacity: 0;
 }
 
 .card{
-  width: 120px;
+  flex: 1 1 120px; /* Allow cards to grow and shrink */
+  max-width: 150px; /* But not too wide */
   height: 180px;
   border: 2px solid green;
   position: relative;
@@ -101,49 +115,141 @@ button{
     opacity: 0;
   }
 
-  .title{
-    font-weight: 600;
-    padding: 5px 0 0 0;
-    text-align: center;
-    transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
-  }
+}
 
-  .description{
-    overflow: scroll;
-    overflow-x: hidden;
-    position: relative;
-    height: 120px;
-    width: 125px;
-    padding: 5px;
-    z-index: 5;
-    text-shadow: 0 0 3px rgb(0, 255, 13), 0 0 3px black;
-    transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
-  }
+.card .title{
+  font-weight: 600;
+  padding: 5px 5px 0 5px;
+  text-align: center;
+  transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
+}
 
-  .icon{
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    font-size: xxx-large;
-    z-index: 1;
-    text-shadow: none;
-    transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
-    /*filter: url(#pixelate);*/
-  }
+.card .description{
+  overflow-y: auto; /* Use auto to show scrollbar only when needed */
+  overflow-x: hidden;
+  position: relative;
+  height: 120px;
+  width: 100%; /* Fit inside the card */
+  padding: 5px;
+  box-sizing: border-box; /* Include padding in width calculation */
+  z-index: 5;
+  text-shadow: 0 0 3px rgb(0, 255, 13), 0 0 3px black;
+  transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
+  scroll-behavior: smooth;
+  /* Стилизация скроллбара для Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(0, 255, 13) #003000;
+}
 
-  .category{
-    position: absolute;
-    left: 5px;
-    bottom: 5px;
-    font-size: smaller;
-    font-style: italic;
-  }
+/* Стилизация скроллбара для WebKit-браузеров (Chrome, Safari, Edge) */
+.card .description::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card .description::-webkit-scrollbar-track {
+  background: #002500;
+}
+
+.card .description::-webkit-scrollbar-thumb {
+  background-color: rgb(0, 255, 13);
+  border-radius: 10px;
+  border: 1px solid green;
+}
+
+.card .icon{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: xxx-large;
+  z-index: 1;
+  text-shadow: none;
+  transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
+  /*filter: url(#pixelate);*/
+}
+
+.card .category{
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  font-size: smaller;
+  font-style: italic;
 }
 
 .commonToolbar{
   padding: 5px;
   border-top: 1px solid green;
   border-bottom: 1px solid green;
+  text-align: center;
 }
 
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
+.modal-overlay.visible {
+  opacity: 1;
+}
+
+.modal-window {
+  background-color: black;
+  background-image: radial-gradient(rgb(0, 26, 3), black 120%);
+  border: 2px solid green;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgb(0, 255, 13);
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-title {
+  font-size: x-large;
+  font-weight: 900;
+  margin-bottom: 15px;
+}
+
+.modal-content {
+  margin-bottom: 20px;
+  white-space: pre-wrap; /* To respect newlines in alerts */
+}
+
+.modal-input {
+  width: calc(100% - 20px);
+  background-color: #001a00;
+  border: 1px solid green;
+  color: rgb(0, 255, 13);
+  padding: 10px;
+  font: 16px Inconsolata, monospace;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .card {
+    height: 160px;
+  }
+
+  .card .description {
+    height: 100px;
+  }
+
+  .toolbar {
+    justify-content: center;
+  }
+}
