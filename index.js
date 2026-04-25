@@ -253,6 +253,7 @@ const Game = {
       this.players.forEach((player) => {
         for (let cardsKey in player.cards) {
           player.cards[cardsKey] = this.pickRandom('player',cardsKey)
+          player.markedCards[cardsKey] = false; // Сбрасываем отметки
         }
       })
       this.showPlayerCards(this.currentPlayer)
