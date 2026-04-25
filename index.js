@@ -60,9 +60,12 @@ const Game = {
         const button = document.createElement('button');
         button.textContent = buttonConfig.text;
         button.onclick = () => {
-          const value = inputElement ? inputElement.value : true;
           this.hideModal();
-          resolve(buttonConfig.resolves ? value : null);
+          if (inputElement) {
+            resolve(buttonConfig.resolves !== null ? inputElement.value : null);
+          } else {
+            resolve(buttonConfig.resolves);
+          }
         };
         this.elements.modalActions.appendChild(button);
       });
@@ -112,6 +115,40 @@ const Game = {
     });
   },
   // --- End of Modal Logic ---
+
+  // --- Card Swap Logic --- // currentPlayer is the player object
+  initiateCardSwap: async function(currentPlayer, cardElement) {
+    const categoryClass = Array.from(cardElement.classList).find(c => c.startsWith('card-') && c !== 'card-hidden' && c !== 'card-flash');
+    if (!categoryClass) return;
+    const category = categoryClass.replace('card-', '');
+
+    const otherPlayers = this.players
+      .map((p, index) => ({ name: p.name, index }))
+      .filter(p => p.name !== currentPlayer.name);
+
+    if (otherPlayers.length === 0) {
+      await this.showAlert('Обмен невозможен', 'Нет других игроков для обмена.');
+      return;
+    }
+
+    const targetPlayerIndex = await this.showModal({
+      title: `Обменять карту "${this.translateCategory(category, true)}"?`,
+      message: 'Выберите игрока для обмена:',
+      buttons: otherPlayers.map(p => ({ text: p.name, resolves: p.index }))
+        .concat([{ text: 'Отмена', resolves: null }])
+    });
+
+    if (targetPlayerIndex === null) return;
+
+    const targetPlayer = this.players[targetPlayerIndex];
+
+    // Swap cards in the data model
+    const cardToGive = currentPlayer.cards[category];
+    const cardToReceive = targetPlayer.cards[category];
+    currentPlayer.cards[category] = cardToReceive;
+    targetPlayer.cards[category] = cardToGive;
+    this.showPlayerCards(this.currentPlayer);
+  },
 
   showInfo: function () {
     const message = `- Карт в колоде: ${this.allCardsAmount - this.wastedCardsAmount}/${this.allCardsAmount}\n- Всего игроков: ${this.players.length}`;
@@ -268,14 +305,32 @@ const Game = {
       }
       this.elements.playerCards.innerHTML = resultHTML
       this.elements.playerCards.querySelectorAll('.card').forEach((card) => {
-        // Single click to toggle visibility
-        card.addEventListener('click', () => {
-          card.classList.toggle('card-hidden')
+        let pressTimer = null;
+        let longPress = false;
+
+        const startPress = (e) => {
+            e.preventDefault(); // Prevent context menu on mobile
+            longPress = false;
+            pressTimer = setTimeout(() => {
+                longPress = true;
+                this.initiateCardSwap(player, card);
+            }, 800); // 800ms for long press
+        };
+
+        const cancelPress = () => {
+            clearTimeout(pressTimer);
+        };
+
+        card.addEventListener('mousedown', startPress);
+        card.addEventListener('mouseup', cancelPress);
+        card.addEventListener('mouseleave', cancelPress);
+        card.addEventListener('touchstart', startPress, { passive: false });
+        card.addEventListener('touchend', cancelPress);
+
+        card.addEventListener('click', (e) => {
+            if (!longPress) card.classList.toggle('card-hidden');
         });
-        // Double click to replace the card
-        card.addEventListener('dblclick', () => {
-            this.handleCardReplacement(player, card);
-        });
+        card.addEventListener('dblclick', () => this.handleCardReplacement(player, card));
       })
       this.elements.currentPlayerName.innerHTML = player.name
   },
