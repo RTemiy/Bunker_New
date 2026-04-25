@@ -324,39 +324,54 @@ const Game = {
       }
       this.elements.playerCards.innerHTML = resultHTML
       this.elements.playerCards.querySelectorAll('.card').forEach((card) => {
-        let pressTimer = null;
-        let longPress = false;
+        let pressTimer;
+        let lastTap = 0;
+        let tapTimeout;
 
-        const startPress = (e) => {
+        const handleSingleTap = () => {
             if (this.cardsLocked) return;
-            e.preventDefault(); // Prevent context menu on mobile
-            longPress = false;
-            pressTimer = setTimeout(() => {
-                longPress = true;
-                this.initiateCardSwap(player, card);
-            }, 800); // 800ms for long press
+            card.classList.toggle('card-hidden');
         };
 
-        const cancelPress = () => {
+        const handleDoubleTap = () => {
+            if (this.cardsLocked) return;
+            this.handleCardReplacement(player, card);
+        };
+
+        const handleLongPress = () => {
+            if (this.cardsLocked) return;
+            this.initiateCardSwap(player, card);
+        };
+
+        const onPointerDown = (e) => {
+            e.preventDefault();
+            pressTimer = setTimeout(handleLongPress, 800); // 800ms for long press
+        };
+
+        const onPointerUp = (e) => {
+            e.preventDefault();
             clearTimeout(pressTimer);
+
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            clearTimeout(tapTimeout);
+
+            if (tapLength < 300 && tapLength > 0) {
+                // Double-tap
+                lastTap = 0;
+                handleDoubleTap();
+            } else {
+                // Single-tap
+                tapTimeout = setTimeout(handleSingleTap, 300);
+                lastTap = currentTime;
+            }
         };
 
-        card.addEventListener('mousedown', startPress);
-        card.addEventListener('mouseup', cancelPress);
-        card.addEventListener('mouseleave', cancelPress);
-        card.addEventListener('touchstart', startPress, { passive: false });
-        card.addEventListener('touchend', cancelPress);
+        // Use pointer events for universal input
+        card.addEventListener('pointerdown', onPointerDown);
+        card.addEventListener('pointerup', onPointerUp);
+        card.addEventListener('pointerleave', () => clearTimeout(pressTimer));
 
-        card.addEventListener('click', (e) => {
-            if (this.cardsLocked) return;
-            if (!longPress) {
-                card.classList.toggle('card-hidden');
-            }
-        });
-        card.addEventListener('dblclick', () => {
-            if (this.cardsLocked) return;
-            this.handleCardReplacement(player, card)
-        });
       })
       this.elements.currentPlayerName.innerHTML = player.name
   },
