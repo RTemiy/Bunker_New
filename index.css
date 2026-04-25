@@ -161,6 +161,11 @@ button{
   50% { box-shadow: 0 0 15px 5px white; }
 }
 
+.card-marked {
+  box-shadow: 0 0 5px #1aff00;
+  border-color: #22ff00;
+}
+
 .card .description{
   overflow-y: auto; /* Use auto to show scrollbar only when needed */
   overflow-x: hidden;

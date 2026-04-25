@@ -283,10 +283,12 @@ const Game = {
 
     const newPlayer = {
       name: playerName,
-      cards: {}
+      cards: {},
+      markedCards: {} // Для отслеживания показанных карт
     }
     for (let allCardsKey in this.allPlayerCards) {
       newPlayer.cards[allCardsKey] = this.pickRandom('player',allCardsKey)
+      newPlayer.markedCards[allCardsKey] = false; // Изначально ни одна карта не показана
     }
     this.players.push(newPlayer)
     this.updatePlayerList();
@@ -313,16 +315,26 @@ const Game = {
       const player = this.players[playerNumber]
       let resultHTML = ''
       for (let cardsKey in player.cards) {
+        const isMarked = player.markedCards[cardsKey];
         resultHTML += `
-          <div class="card card-hidden card-${cardsKey}">
+          <div class="card card-hidden card-${cardsKey} ${isMarked ? 'card-marked' : ''}">
             <p class="title">${player.cards[cardsKey].title}</p>
             <p class="description">${player.cards[cardsKey].description}</p>
             <p class="icon">${player.cards[cardsKey].icon}</p>
-            <p class="category">${this.translateCategory(cardsKey)}</p>
+            <p class="category" data-category="${cardsKey}">${this.translateCategory(cardsKey)}</p>
           </div>
         `
       }
       this.elements.playerCards.innerHTML = resultHTML
+
+      // Добавляем обработчик для маркировки карт
+      this.elements.playerCards.querySelectorAll('.category').forEach(categoryEl => {
+        categoryEl.onclick = (e) => {
+          e.stopPropagation(); // Предотвращаем открытие/закрытие карты
+          const cardEl = categoryEl.closest('.card');
+          this.toggleCardMark(player, cardEl, categoryEl.dataset.category);
+        };
+      });
       this.elements.playerCards.querySelectorAll('.card').forEach((card) => {
         let pressTimer;
         let lastTap = 0;
@@ -393,6 +405,12 @@ const Game = {
       this.elements.lockCardsButton.innerHTML = this.cardsLocked ? '<span class="lockCardsButtonIcon">🔒</span>' : '<span class="lockCardsButtonIcon">🔓</span>';
   },
 
+  toggleCardMark: function(player, cardElement, category) {
+    if (this.cardsLocked) return;
+    // Обновляем состояние в данных игрока и переключаем CSS-класс
+    player.markedCards[category] = !player.markedCards[category];
+    cardElement.classList.toggle('card-marked');
+  },
 
   allPlayerCards : {
     biology: [],
