@@ -131,6 +131,15 @@ button{
   transition: opacity 0.5s ease-in, display 0.5s allow-discrete, visibility 0.5s ease-in-out;
 }
 
+.card-flash {
+  animation: flash 0.5s ease-out;
+}
+
+@keyframes flash {
+  0%, 100% { box-shadow: 0 0 4px rgba(20, 180, 20, 0.7); }
+  50% { box-shadow: 0 0 15px 5px white; }
+}
+
 .card .description{
   overflow-y: auto; /* Use auto to show scrollbar only when needed */
   overflow-x: hidden;

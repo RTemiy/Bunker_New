@@ -118,6 +118,32 @@ const Game = {
     this.showAlert('Информация', message);
   },
 
+  // --- Card Actions ---
+  async handleCardReplacement(player, cardElement) {
+    const categoryClass = Array.from(cardElement.classList).find(c => c.startsWith('card-') && c !== 'card-hidden' && c !== 'card-flash');
+    if (!categoryClass) return;
+    const category = categoryClass.replace('card-', '');
+
+    const confirmed = await this.showConfirmation('Заменить карту?', `Вы уверены, что хотите заменить карту "${this.translateCategory(category, true)}"?`);
+    if (!confirmed) return;
+
+    const newCard = this.pickRandom('player', category);
+    if (!newCard) {
+      await this.showAlert('Ошибка', 'В этой колоде закончились карты.');
+      return;
+    }
+
+    // Update player data and UI
+    player.cards[category] = newCard;
+    cardElement.querySelector('.title').textContent = newCard.title;
+    cardElement.querySelector('.description').textContent = newCard.description;
+    cardElement.querySelector('.icon').textContent = newCard.icon;
+
+    // Flash effect
+    cardElement.classList.add('card-flash');
+    setTimeout(() => cardElement.classList.remove('card-flash'), 500);
+  },
+
   showAllCards: function () {
     this.elements.showCardsButton.style.display = 'none'
       for (let allCardsKey in this.allPlayerCards) {
@@ -232,7 +258,7 @@ const Game = {
       let resultHTML = ''
       for (let cardsKey in player.cards) {
         resultHTML += `
-          <div class="card card-hidden">
+          <div class="card card-hidden card-${cardsKey}">
             <p class="title">${player.cards[cardsKey].title}</p>
             <p class="description">${player.cards[cardsKey].description}</p>
             <p class="icon">${player.cards[cardsKey].icon}</p>
@@ -242,10 +268,15 @@ const Game = {
       }
       this.elements.playerCards.innerHTML = resultHTML
       this.elements.playerCards.querySelectorAll('.card').forEach((card) => {
-        card.onclick = () => {
+        // Single click to toggle visibility
+        card.addEventListener('click', () => {
           card.classList.toggle('card-hidden')
-        }
-    })
+        });
+        // Double click to replace the card
+        card.addEventListener('dblclick', () => {
+            this.handleCardReplacement(player, card);
+        });
+      })
       this.elements.currentPlayerName.innerHTML = player.name
   },
 
@@ -313,22 +344,26 @@ const Game = {
           break
       }
 
-
+    if (!categoryCards || categoryCards.length === 0) {
+        this.wastedCardsAmount--; // Revert count if no card was picked
+        return null;
+    }
+    
     const randomNumber = Math.floor(Math.random() * categoryCards.length)
     return categoryCards.splice(randomNumber, 1)[0]
   },
 
-  translateCategory : function (category) {
+  translateCategory : function (category, plainText = false) {
     let categoryName = ''
     switch (category){
       case 'bunker':
-        categoryName = '<span style="color: #00b2ff; text-shadow: 0 0 3px rgb(0 217 255);">Бункер</span>'
+        categoryName = plainText ? 'Бункер' : '<span style="color: #00b2ff; text-shadow: 0 0 3px rgb(0 217 255);">Бункер</span>'
         break
       case 'cataclysm':
-        categoryName = '<span style="color: #ff00fb; text-shadow: 0 0 3px rgb(238 0 255);">Катастрофа</span>'
+        categoryName = plainText ? 'Катастрофа' : '<span style="color: #ff00fb; text-shadow: 0 0 3px rgb(238 0 255);">Катастрофа</span>'
         break
       case 'danger':
-        categoryName = '<span style="color: yellow; text-shadow: 0 0 3px rgb(255 221 0);">Опасность</span>'
+        categoryName = plainText ? 'Опасность' : '<span style="color: yellow; text-shadow: 0 0 3px rgb(255 221 0);">Опасность</span>'
         break
       case 'biology':
         categoryName = 'Биология'
