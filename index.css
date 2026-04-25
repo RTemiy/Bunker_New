@@ -82,8 +82,29 @@ button{
   padding: 2px 5px;
 }
 
+.lockCardsButtonIcon{
+  filter: sepia(100%) hue-rotate(60deg) saturate(250%) brightness(0.8);
+}
+
 .toolbar .newGameButton{
   background-color: #300000;
+}
+
+.playerList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px;
+  color: rgb(20, 180, 20);
+}
+
+.playerList-item {
+  border: 1px solid green;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background-color: #001a00;
+  box-shadow: 0 0 2px rgba(20, 180, 20, 0.5);
 }
 
 .playerCards, .commonCards{

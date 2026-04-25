@@ -13,7 +13,9 @@ const Game = {
       dangerToolbarButton : document.querySelector('.dangerToolbarButton'),
       commonCards: document.querySelector('.commonCards'),
       newGameButton: document.querySelector('.newGameButton'),
+      playerList: document.querySelector('.playerList'),
       infoButton: document.querySelector('.infoButton'),
+      lockCardsButton: document.querySelector('.lockCardsButton'),
       modalOverlay: document.querySelector('#modal-overlay'),
       modalWindow: document.querySelector('#modal-window'),
       modalTitle: document.querySelector('#modal-title'),
@@ -32,6 +34,7 @@ const Game = {
       this.elements.dangerToolbarButton.onclick = this.pickBunkerCard.bind(this, 'danger')
       this.elements.newGameButton.onclick = this.confirmNewGame.bind(this)
       this.elements.infoButton.onclick = this.showInfo.bind(this)
+      this.elements.lockCardsButton.onclick = this.toggleLockCards.bind(this)
   },
 
   // --- Custom Modal Logic ---
@@ -218,7 +221,9 @@ const Game = {
       this.elements.commonToolbar.style.display = 'block'
       this.elements.currentPlayerName.style.display = 'block'
       this.elements.commonCards.style.display = 'flex'
+      this.elements.playerList.style.display = 'none'
       this.elements.newGameButton.style.display = 'block'
+      this.elements.lockCardsButton.style.display = 'block'
       this.showPlayerCards(this.currentPlayer)
   },
 
@@ -258,6 +263,7 @@ const Game = {
   currentPlayer : 0,
   allCardsAmount : 0,
   wastedCardsAmount : 0,
+  cardsLocked: false,
   firstAddPlayer: true,
 
   addPlayer : async function () {
@@ -283,7 +289,20 @@ const Game = {
       newPlayer.cards[allCardsKey] = this.pickRandom('player',allCardsKey)
     }
     this.players.push(newPlayer)
+    this.updatePlayerList();
     this.checkPlayersAmount()
+  },
+
+  updatePlayerList: function() {
+    this.elements.playerList.innerHTML = ''; // Clear the list first
+    if (this.players.length > 0) {
+      const title = document.createElement('p');
+      title.textContent = 'Игроки:';
+      this.elements.playerList.appendChild(title);
+    }
+    this.players.forEach(player => {
+        this.elements.playerList.innerHTML += `<span class="playerList-item">${player.name}</span>`;
+    });
   },
 
   checkPlayersAmount : function () {
@@ -309,6 +328,7 @@ const Game = {
         let longPress = false;
 
         const startPress = (e) => {
+            if (this.cardsLocked) return;
             e.preventDefault(); // Prevent context menu on mobile
             longPress = false;
             pressTimer = setTimeout(() => {
@@ -328,9 +348,15 @@ const Game = {
         card.addEventListener('touchend', cancelPress);
 
         card.addEventListener('click', (e) => {
-            if (!longPress) card.classList.toggle('card-hidden');
+            if (this.cardsLocked) return;
+            if (!longPress) {
+                card.classList.toggle('card-hidden');
+            }
         });
-        card.addEventListener('dblclick', () => this.handleCardReplacement(player, card));
+        card.addEventListener('dblclick', () => {
+            if (this.cardsLocked) return;
+            this.handleCardReplacement(player, card)
+        });
       })
       this.elements.currentPlayerName.innerHTML = player.name
   },
@@ -346,6 +372,12 @@ const Game = {
       await this.showAlert('Смена игрока', 'Передайте устройство игроку: ' + this.players[this.currentPlayer].name);
       this.showPlayerCards(this.currentPlayer);
   },
+
+  toggleLockCards: function() {
+      this.cardsLocked = !this.cardsLocked;
+      this.elements.lockCardsButton.innerHTML = this.cardsLocked ? '<span class="lockCardsButtonIcon">🔒</span>' : '<span class="lockCardsButtonIcon">🔓</span>';
+  },
+
 
   allPlayerCards : {
     biology: [],
