@@ -30,7 +30,7 @@ const Game = {
       this.elements.bunkerToolbarButton.onclick = this.pickBunkerCard.bind(this, 'bunker')
       this.elements.cataclysmToolbarButton.onclick = this.pickBunkerCard.bind(this, 'cataclysm')
       this.elements.dangerToolbarButton.onclick = this.pickBunkerCard.bind(this, 'danger')
-      this.elements.newGameButton.onclick = this.startNewRound.bind(this)
+      this.elements.newGameButton.onclick = this.confirmNewGame.bind(this)
       this.elements.infoButton.onclick = this.showInfo.bind(this)
   },
 
@@ -100,6 +100,17 @@ const Game = {
       buttons: [{ text: 'OK', resolves: true }]
     });
   },
+
+  showConfirmation: function(title, message) {
+    return this.showModal({
+      title: title,
+      message: message,
+      buttons: [
+        { text: 'Да', resolves: true },
+        { text: 'Нет', resolves: false }
+      ]
+    });
+  },
   // --- End of Modal Logic ---
 
   showInfo: function () {
@@ -159,6 +170,13 @@ const Game = {
             <p class="category">${this.translateCategory(category)}</p>
           </div>
     `
+  },
+
+  confirmNewGame: async function() {
+    const confirmed = await this.showConfirmation('Новая игра', 'Вы уверены, что хотите начать новую игру? Все текущие карты игроков будут заменены.');
+    if (confirmed) {
+      this.startNewRound();
+    }
   },
 
   startNewRound: function () {
