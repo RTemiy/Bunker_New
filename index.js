@@ -46,7 +46,8 @@ const Game = {
 
       if (config.message) {
         const messageP = document.createElement('p');
-        messageP.textContent = config.message;
+        // Используем innerHTML, чтобы теги (вроде <br> или <strong>) обрабатывались как HTML
+        messageP.innerHTML = config.message;
         this.elements.modalContent.appendChild(messageP);
       }
 
@@ -209,6 +210,7 @@ const Game = {
     const action = await this.showModal({
       title: 'Меню',
       buttons: [
+        { text: 'Правила', resolves: 'show_rules' },
         { text: 'Информация', resolves: 'show_info' },
         { text: 'Новый раунд', resolves: 'new_round', className: 'new-game-button' },
         { text: 'Новая игра', resolves: 'hard_reset', className: 'hard-reset-button' },
@@ -216,7 +218,10 @@ const Game = {
       ]
     });
 
-    if (action === 'show_info') {
+    if (action === 'show_rules') {
+      await this.showRules();
+      this.showGameMenu(); // Показываем меню снова после закрытия правил
+    } else if (action === 'show_info') {
       await this.showInfo();
       // После закрытия информации, снова показываем меню
       this.showGameMenu();
@@ -243,6 +248,31 @@ const Game = {
     // Ждем, пока пользователь нажмет OK
     await this.showModal({ title: 'Информация', message, buttons: [{ text: 'OK', resolves: true }] });
     // Модальное окно закроется в showGameMenu
+  },
+
+  showRules: async function() {
+    const rulesText = `**Цель игры:**
+Решить, кто из выживших достоин попасть в спасительный бункер после глобальной катастрофы.
+
+**Ход игры:**
+1.  **Подготовка:** Игроки добавляются в игру и получают случайный набор карт (профессия, здоровье, хобби и т.д.). Эти карты — ваша личность.
+2.  **Начало:** Ведущий открывает карту «Катастрофа», которая задает условия выживания.
+3.  **Обсуждение:** Игроки по очереди вскрывают свои карты (одиночный тап) и убеждают остальных в своей полезности для группы.
+4.  **Действия:** Двойной тап по своей карте открывает меню действий: можно заменить карту на новую из колоды, обменяться с другим игроком или отметить карту как важную.
+5.  **События:** Периодически ведущий открывает карты «Угроза» и «Бункер», которые вносят в игру новые условия и испытания.
+6.  **Голосование:** В конце каждого раунда или по общему решению игроки голосуют, кого изгнать из группы.
+
+**Управление:**
+-   **Одиночнное нажатие на карту:** Показать/скрыть карту.
+-   **Двойное нажатие на карту:** Открыть меню действий с картой.
+-   **Иконка <span class="lockCardsButtonIcon">👁️</span>:** Показать/скрыть все свои карты.
+-   **Иконка <span class="lockCardsButtonIcon">🔓/🔒</span>:** Заблокировать/разблокировать карты от случайных нажатий.`;
+
+    await this.showModal({
+      title: 'Правила игры',
+      message: rulesText.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'), // Форматируем текст для HTML
+      buttons: [{ text: 'Закрыть', resolves: true }]
+    });
   },
 
   // --- Card Actions ---
