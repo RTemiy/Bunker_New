@@ -3,18 +3,16 @@ const Game = {
       addPlayerButton : document.querySelector('.addPlayerButton'),
       showCardsButton : document.querySelector('.showCardsButton'),
       startGameButton : document.querySelector('.startGameButton'),
-      previousPlayerButton : document.querySelector('.previousPlayerButton'),
-      nextPlayerButton : document.querySelector('.nextPlayerButton'),
-      currentPlayerName : document.querySelector('.currentPlayerName'),
       playerCards : document.querySelector('.playerCards'),
+      playerSwitcher: document.querySelector('.player-switcher'),
       commonToolbar: document.querySelector('.commonToolbar'),
       bunkerToolbarButton : document.querySelector('.bunkerToolbarButton'),
       cataclysmToolbarButton : document.querySelector('.cataclysmToolbarButton'),
       dangerToolbarButton : document.querySelector('.dangerToolbarButton'),
       commonCards: document.querySelector('.commonCards'),
       playerList: document.querySelector('.playerList'),
-      infoButton: document.querySelector('.infoButton'),
       lockCardsButton: document.querySelector('.lockCardsButton'),
+      toggleAllCardsButton: document.querySelector('.toggleAllCardsButton'),
       modalOverlay: document.querySelector('#modal-overlay'),
       modalWindow: document.querySelector('#modal-window'),
       modalTitle: document.querySelector('#modal-title'),
@@ -29,14 +27,13 @@ const Game = {
       this.elements.addPlayerButton.onclick = this.addPlayer.bind(this)
       this.elements.startGameButton.onclick = this.startGame.bind(this)
       this.elements.showCardsButton.onclick = this.showAllCards.bind(this)
-      this.elements.nextPlayerButton.onclick = this.nextPlayer.bind(this, +1)
-      this.elements.previousPlayerButton.onclick = this.nextPlayer.bind(this, -1)
       this.elements.bunkerToolbarButton.onclick = this.pickBunkerCard.bind(this, 'bunker')
       this.elements.cataclysmToolbarButton.onclick = this.pickBunkerCard.bind(this, 'cataclysm')
       this.elements.dangerToolbarButton.onclick = this.pickBunkerCard.bind(this, 'danger')
-      this.elements.infoButton.onclick = this.showInfo.bind(this)
       this.elements.lockCardsButton.onclick = this.toggleLockCards.bind(this)
+      this.elements.toggleAllCardsButton.onclick = this.toggleAllPlayerCards.bind(this)
       this.elements.menuButton.onclick = this.showGameMenu.bind(this)
+      this.elements.playerSwitcher.onchange = this.handlePlayerSwitch.bind(this);
   },
 
   // --- Custom Modal Logic ---
@@ -210,20 +207,25 @@ const Game = {
 
   showGameMenu: async function() {
     const action = await this.showModal({
-      title: 'Меню игры',
+      title: 'Меню',
       buttons: [
-        { text: 'Новый раунд', resolves: 'new_round' },
+        { text: 'Информация', resolves: 'show_info' },
+        { text: 'Новый раунд', resolves: 'new_round', className: 'new-game-button' },
         { text: 'Новая игра', resolves: 'hard_reset', className: 'hard-reset-button' },
-        { text: 'Отмена', resolves: null }
+        { text: 'Продолжить', resolves: null }
       ]
     });
 
-    if (action === 'new_round') {
+    if (action === 'show_info') {
+      await this.showInfo();
+      // После закрытия информации, снова показываем меню
+      this.showGameMenu();
+    } else if (action === 'new_round') {
       this.confirmNewGame();
     } else if (action === 'hard_reset') {
       const confirmed = await this.showModal({
         title: 'Начать с нуля?',
-        message: 'Вы уверены? Все игроки и прогресс будут удалены. Это действие нельзя отменить.',
+        message: 'Вы уверены? Все игроки и прогресс будут удалены. Это действие необратимо.',
         buttons: [{ text: 'Да', resolves: true }, { text: 'Нет', resolves: false }]
       });
       if (confirmed) {
@@ -235,9 +237,12 @@ const Game = {
     }
   },
 
-  showInfo: function () {
+  showInfo: async function () {
     const message = `- Карт в колоде: ${this.allCardsAmount - this.wastedCardsAmount}/${this.allCardsAmount}\n- Всего игроков: ${this.players.length}`;
-    this.showAlert('Информация', message);
+    // Не скрываем основное меню, просто показываем информацию поверх
+    // Ждем, пока пользователь нажмет OK
+    await this.showModal({ title: 'Информация', message, buttons: [{ text: 'OK', resolves: true }] });
+    // Модальное окно закроется в showGameMenu
   },
 
   // --- Card Actions ---
@@ -300,13 +305,12 @@ const Game = {
       this.elements.categorySelection.style.display = 'none';
       this.elements.startGameButton.style.display = 'none'
       this.elements.showCardsButton.style.display = 'none'
-      this.elements.nextPlayerButton.style.display = 'flex'
-      this.elements.previousPlayerButton.style.display = 'flex'
       this.elements.commonToolbar.style.display = 'block'
-      this.elements.currentPlayerName.style.display = 'block'
+      this.elements.playerSwitcher.style.display = 'block';
       this.elements.commonCards.style.display = 'flex'
       this.elements.menuButton.style.display = 'block'
       this.elements.lockCardsButton.style.display = 'block'
+      this.elements.toggleAllCardsButton.style.display = 'block'
       this.showPlayerCards(this.currentPlayer)
   },
 
@@ -357,7 +361,6 @@ const Game = {
   addPlayer : async function () {
       if (this.firstAddPlayer) {
         this.firstAddPlayer = false
-        this.elements.infoButton.style.display = 'block'
         for (let allPlayerCardsKey in this.allPlayerCards) {
           this.allCardsAmount += this.allPlayerCards[allPlayerCardsKey].length
         }
@@ -396,6 +399,20 @@ const Game = {
     this.players.forEach(player => {
         this.elements.playerList.innerHTML += `<span class="playerList-item">${player.name}</span>`;
     });
+    this.updatePlayerSwitcher();
+  },
+
+  updatePlayerSwitcher: function() {
+    const switcher = this.elements.playerSwitcher;
+    switcher.innerHTML = ''; // Clear old options
+
+    this.players.forEach((player, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = player.name;
+        switcher.appendChild(option);
+    });
+    switcher.value = this.currentPlayer;
   },
 
   checkPlayersAmount : function () {
@@ -447,19 +464,36 @@ const Game = {
         });
 
       })
-      this.elements.currentPlayerName.innerHTML = player.name
+      this.updatePlayerSwitcher();
   },
 
-  nextPlayer : async function (number) {
-      this.currentPlayer+=number
-      if (this.currentPlayer >= this.players.length) {
-          this.currentPlayer = 0
-      } else if (this.currentPlayer < 0){
-          this.currentPlayer = this.players.length - 1
-      }
-      this.elements.playerCards.innerHTML = ''
-      await this.showAlert('Смена игрока', 'Передайте устройство игроку: ' + this.players[this.currentPlayer].name);
-      this.showPlayerCards(this.currentPlayer);
+  handlePlayerSwitch: async function(event) {
+    const newPlayerIndex = parseInt(event.target.value, 10);
+    if (newPlayerIndex === this.currentPlayer) return; // No change
+
+    this.currentPlayer = newPlayerIndex;
+    this.elements.playerCards.innerHTML = '';
+    await this.showAlert('Смена игрока', 'Передайте устройство игроку: ' + this.players[this.currentPlayer].name);
+    this.showPlayerCards(this.currentPlayer);
+  },
+
+  toggleAllPlayerCards: function() {
+    if (this.cardsLocked) return; // Respect the lock
+    const cards = this.elements.playerCards.querySelectorAll('.card');
+    if (cards.length === 0) return;
+
+    // Determine if we should show or hide.
+    // If at least one card is hidden, the action is to show all.
+    // If all cards are visible, the action is to hide all.
+    const shouldShowAll = Array.from(cards).some(card => card.classList.contains('card-hidden'));
+
+    cards.forEach(card => {
+        if (shouldShowAll) {
+            card.classList.remove('card-hidden');
+        } else {
+            card.classList.add('card-hidden');
+        }
+    });
   },
 
   toggleLockCards: function() {
@@ -613,6 +647,7 @@ const Game = {
       allPlayerCards: this.allPlayerCards,
       allBunkerCards: this.allBunkerCards,
       wastedCardsAmount: this.wastedCardsAmount,
+      allCardsAmount: this.allCardsAmount,
       cardsLocked: this.cardsLocked,
       firstAddPlayer: this.firstAddPlayer,
       shownCommonCards: this.shownCommonCards,
@@ -635,6 +670,7 @@ const Game = {
       this.allPlayerCards = state.allPlayerCards;
       this.allBunkerCards = state.allBunkerCards;
       this.wastedCardsAmount = state.wastedCardsAmount;
+      this.allCardsAmount = state.allCardsAmount || 0; // Загружаем общее кол-во карт
       this.cardsLocked = state.cardsLocked;
       this.firstAddPlayer = state.firstAddPlayer;
       this.shownCommonCards = state.shownCommonCards || [];
@@ -645,6 +681,17 @@ const Game = {
       this.toggleLockCards(); // To set the icon correctly
       this.toggleLockCards(); // Call it twice to revert to original state but update UI
 
+      // Пересчитываем общее количество карт, если оно не было сохранено (для старых сохранений)
+      if (this.allCardsAmount === 0 && this.players.length > 0) {
+        for (let allPlayerCardsKey in this.allPlayerCards) {
+          this.allCardsAmount += this.allPlayerCards[allPlayerCardsKey].length
+        }
+        for (let allBunkerCardsKey in this.allBunkerCards) {
+          this.allCardsAmount += this.allBunkerCards[allBunkerCardsKey].length
+        }
+        this.allCardsAmount += this.wastedCardsAmount; // Добавляем уже использованные карты
+      }
+
       if (state.gameStarted) {
         // Game was in progress
         this.elements.addPlayerButton.style.display = 'none';
@@ -652,15 +699,13 @@ const Game = {
         this.elements.categorySelection.style.display = 'none';
         this.elements.showCardsButton.style.display = 'none';
         this.elements.playerList.style.display = 'none';
-        this.elements.infoButton.style.display = 'block';
 
-        this.elements.nextPlayerButton.style.display = 'flex';
-        this.elements.previousPlayerButton.style.display = 'flex';
         this.elements.commonToolbar.style.display = 'block';
-        this.elements.currentPlayerName.style.display = 'block';
+        this.elements.playerSwitcher.style.display = 'block';
         this.elements.commonCards.style.display = 'flex'; 
         this.elements.menuButton.style.display = 'block';
         this.elements.lockCardsButton.style.display = 'block';
+        this.elements.toggleAllCardsButton.style.display = 'block';
 
         // Re-render common cards
         this.elements.commonCards.innerHTML = '';
@@ -678,7 +723,6 @@ const Game = {
         this.showPlayerCards(this.currentPlayer);
       } else {
         // Game was not started, just players added
-        this.elements.infoButton.style.display = 'block';
         this.elements.menuButton.style.display = 'block';
         this.elements.categorySelection.style.display = 'block';
         this.populateCategorySelection();
