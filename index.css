@@ -90,6 +90,43 @@ button{
   background-color: #300000;
 }
 
+.category-selection {
+  padding: 10px;
+  border-bottom: 1px solid green;
+  margin-bottom: 10px;
+  color: rgb(20, 180, 20);
+}
+
+.category-selection h3 {
+  margin: 0 0 10px 0;
+  text-align: center;
+  font-size: large;
+}
+
+.category-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.category-checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid green;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #001a00;
+  cursor: pointer;
+}
+
+label{
+  input{
+    filter: sepia(100%) hue-rotate(60deg) saturate(250%) brightness(0.8);
+  }
+}
+
 .playerList {
   display: flex;
   flex-direction: column;
@@ -162,8 +199,8 @@ button{
 }
 
 .card-marked {
-  box-shadow: 0 0 5px #1aff00;
-  border-color: #22ff00;
+  box-shadow: 0 0 8px 1px #00ff04;
+  border-color: #2fff00;
 }
 
 .card .description{
@@ -280,6 +317,11 @@ button{
   display: flex;
   justify-content: center;
   gap: 10px;
+  flex-direction: column;
+}
+
+.modal-actions .hard-reset-button {
+  background-color: #300000;
 }
 
 @media (max-width: 480px) {

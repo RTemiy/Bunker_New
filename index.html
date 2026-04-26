@@ -15,14 +15,19 @@
         <p class="currentPlayerName" style="display: none"></p>
         <button class="previousPlayerButton" style="display: none">Предыдущий игрок</button>
         <button class="nextPlayerButton" style="display: none">Следующий игрок</button>
-        <button class="newGameButton" style="display: none">Новая игра</button>
         <button class="lockCardsButton" style="display: none"><span class="lockCardsButtonIcon">🔓</span></button>
-        <button class="infoButton" style="display: none">?</button>
+        <button class="infoButton" style="display: none">?</button><button class="menuButton" style="display: none;"><span class="lockCardsButtonIcon">⚙️</span></button>
+    </div>
+    <div id="category-selection" class="category-selection" style="display: none;">
+        <h3>Выберите категории карт для игры:</h3>
+        <div id="category-checkboxes" class="category-checkboxes">
+            <!-- Сюда будут добавлены чекбоксы с помощью JS -->
+        </div>
     </div>
     <div class="playerList"></div>
     <div class="playerCards"></div>
     <div class="commonToolbar" style="display: none">
-        <button class="cataclysmToolbarButton">Катаклизм</button>
+        <button class="cataclysmToolbarButton">Катастрофа</button>
         <button class="bunkerToolbarButton">Бункер</button>
         <button class="dangerToolbarButton">Угроза</button>
     </div>
